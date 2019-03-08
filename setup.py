@@ -50,9 +50,9 @@ if sys.version_info < (3, 0):
 
 
 setup(
-    name='flower',
+    name='flowerds',
     version=get_package_version(),
-    description='Celery Flower',
+    description='Celery Flower fork (with in-memory backup for failed tasks)',
     long_description=open('README.rst').read(),
     author='Mher Movsisyan',
     author_email='mher.movsisyan@gmail.com',

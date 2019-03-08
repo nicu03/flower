@@ -1,5 +1,5 @@
-Celery Flower
-=============
+Celery Flower fork (with in-memory backup for failed tasks)
+===========================================================
 
 .. image:: https://img.shields.io/pypi/v/flower.svg
     :target: https://pypi.python.org/pypi/flower

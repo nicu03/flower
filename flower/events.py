@@ -34,6 +34,8 @@ class EventsState(State):
     def __init__(self, *args, **kwargs):
         super(EventsState, self).__init__(*args, **kwargs)
         self.counter = collections.defaultdict(Counter)
+        self.backup = collections.OrderedDict()
+        self.max_backup_in_memory = 10000
 
     def event(self, event):
         worker_name = event['hostname']
@@ -48,7 +50,11 @@ class EventsState(State):
             cls.send_message(event)
 
         # Save the event
-        super(EventsState, self).event(event)
+        saved_task = super(EventsState, self).event(event)
+        if saved_task[1] == 'failed' and saved_task[0][0].state == celery.states.FAILURE:
+            self.backup[saved_task[0][0].uuid] = saved_task[0][0]
+            if len(self.backup) + 1 > self.max_backup_in_memory:
+                self.backup.popitem(last=False)
 
 
 class Events(threading.Thread):

@@ -22,6 +22,9 @@ class TaskView(BaseHandler):
     def get(self, task_id):
         task = get_task_by_id(self.application.events, task_id)
 
+        if task is None and self.application.events.state.backup:
+            task = self.application.events.state.backup.get(task_id) or None
+
         if task is None:
             raise web.HTTPError(404, "Unknown task '%s'" % task_id)
 
@@ -50,6 +53,10 @@ class TasksDataTable(BaseHandler):
         tasks = sorted(iter_tasks(app.events, search=search),
                        key=key, reverse=sort_order)
         tasks = list(map(self.format_task, tasks))
+
+        if search == 'state:BACKUP':
+            tasks = list(map(self.format_task, reversed(app.events.state.backup.items())))
+
         filtered_tasks = []
         i = 0
         for _, task in tasks:
